@@ -11,8 +11,9 @@
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/bin/Debug/net5.0/CombineGarminVideo.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}",
+            "args": ["-d"],
+            "cwd": "G:/Dashcam video/test",
+            // "cwd": "${workspaceFolder}",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",
             "stopAtEntry": false
