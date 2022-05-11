@@ -1,10 +1,15 @@
 # Combine Garmin Video
 
 ## Usage
+
 `path-to-program-folder\CombineGarminVideo.exe [path-to-source-video-folder] [-d] [-o path-to-output-folder]`
 
+### Arguments
+
 `[path-to-video-folder]` Optional; defaults to current folder<br/>
+
 `-d, --delete`    (Default: false) Delete after processing.
+
 `-o, --output`    (Default: current folder) folder where combined files are saved.
 
 ## General
