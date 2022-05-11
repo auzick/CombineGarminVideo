@@ -14,9 +14,9 @@
 
 ## General
 
-My Garmin dashcam (the DashCam Mini, but presumably other Garmin dashcams as well), store video in one minute increments on the SD card.
+My Garmin dashcam (the DashCam Mini, but presumably other Garmin dashcams as well), stores video in one minute increments on the SD card.
 
-This app will concatenate those one-minute videos into larger video files, by looking for series of files that are roughly within a minute of each other and assuming they form a seequence.
+This app will concatenate those one-minute videos into larger video files, by looking for series of files that are roughly within a minute of each other and assuming they form a sequence.
 
 Using the `-d` switch will delete the source files after they have been combined.
 
