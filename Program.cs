@@ -20,7 +20,7 @@ namespace CombineGarminVideo
                 {
                     try
                     {
-                        return await ProcessClips(opts.FolderPath, opts.Delete);
+                        return await ProcessClips(opts.InputFolder, opts.Delete, opts.OutputFolder);
                     }
                     catch
                     {
@@ -31,9 +31,14 @@ namespace CombineGarminVideo
                 errs => Task.FromResult(-1)); // Invalid arguments
         }
 
-        private static async Task<int> ProcessClips(string folderPath, bool deleteFiles)
+        private static async Task<int> ProcessClips(string inputFolder, bool deleteFiles, string outputFolder)
         {
-            if (!TryResolveSourcePath(folderPath, out string sourcePath))
+            if (!TryResolveSourcePath(inputFolder, out string sourcePath))
+            {
+                return -1;
+            }
+
+            if (!TryResolveOutputPath(outputFolder, out string destPath))
             {
                 return -1;
             }
@@ -51,7 +56,8 @@ namespace CombineGarminVideo
                 if (secondsBetweenFiles > 70)
                 {
                     var batchName = $"{File.GetLastWriteTime(batch[0]).ToString("yyyyMMdd.HHmm")}";
-                    using (StreamWriter outputFile = new StreamWriter(Path.Combine(sourcePath, $"{batchName}.txt"), false))
+                    var batchListFile = Path.Combine(destPath, $"{batchName}.txt");
+                    using (StreamWriter outputFile = new StreamWriter(batchListFile, false))
                     {
                         foreach (var item in batch)
                         {
@@ -59,8 +65,12 @@ namespace CombineGarminVideo
                         }
                     }
                     double totalSize = batch.Sum(file => new FileInfo(file).Length);
-                    ConsoleColor.Green.WriteLine($"Combining {Math.Floor(totalSize / 1048576)}mb from {batch.Count} files into {batchName}.mp4");
-                    var cmd = $"ffmpeg -y -safe 0 -f concat -i {batchName}.txt -c copy -map 0:v -map 0:a -map 0:3? -copy_unknown -tag:2 gpmd {batchName}.mp4";
+
+                    var batchOutPath = Path.Combine(destPath, $"{batchName}.mp4");
+                    Console.WriteLine(batchOutPath);
+
+                    ConsoleColor.Green.WriteLine($"Combining {Math.Floor(totalSize / 1048576)}mb from {batch.Count} files into {batchOutPath}");
+                    var cmd = $"ffmpeg -y -safe 0 -f concat -i {batchListFile} -c copy -map 0:v -map 0:a -map 0:3? -copy_unknown -tag:2 gpmd {batchOutPath}";
                     RunCommand(sourcePath, cmd);
 
                     if (deleteFiles)
@@ -73,7 +83,7 @@ namespace CombineGarminVideo
                         }
                     }
 
-                    File.Delete(Path.Combine(sourcePath, $"{batchName}.txt"));
+                    File.Delete(batchListFile);
                     batch.Clear();
 
                 }
@@ -85,6 +95,18 @@ namespace CombineGarminVideo
 
         }
 
+        private static bool TryResolveOutputPath(string path, out string resolvedPath)
+        {
+            resolvedPath = path;
+            if (string.IsNullOrEmpty(resolvedPath)) { resolvedPath = Environment.CurrentDirectory; }
+            if (!Directory.Exists(resolvedPath))
+            {
+                ConsoleColor.Red.WriteLine($"Output path does not exist: {resolvedPath}");
+                resolvedPath = null;
+                return false;
+            }
+            return true;
+        }
 
         private static bool TryResolveSourcePath(string path, out string resolvedPath)
         {
@@ -93,7 +115,7 @@ namespace CombineGarminVideo
 
             if (!Directory.Exists(resolvedPath))
             {
-                ConsoleColor.Red.WriteLine($"Path does not exist: {resolvedPath}");
+                ConsoleColor.Red.WriteLine($"Input path does not exist: {resolvedPath}");
                 resolvedPath = null;
                 return false;
             }
