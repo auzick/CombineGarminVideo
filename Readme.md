@@ -20,6 +20,6 @@ This app will concatenate those one-minute videos into larger video files, by lo
 
 Using the `-d` switch will delete the source files after they have been combined.
 
-The application will detect each sequence of videos and combine them into a file in the form `yyyyMMdd.HHmm.mpg` based on the start time of the first video in the ssequence.
+The application will detect each sequence of videos and combine them into a file in the form `yyyyMMdd.HHmm.mpg` based on the start time of the first video in the sequence.
 
-This requires that you have [FFMpeg](https://ffmpeg.org/) installed. (`choco install ffmpeg`).
+This application requires that you have [FFMpeg](https://ffmpeg.org/) installed. (`choco install ffmpeg`).
